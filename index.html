@@ -18,6 +18,7 @@ var OnFloating = {IF:false, X:0, Y:0};
 var StartPosition = {X:0, Y:0};
 var LastTouchPostion = {clientX:0, clientY:0};
 var IfDown;
+var Round;
 
 function InitCanvas() {
 	//alert("Initing");
@@ -53,6 +54,7 @@ function IsPC()
            return flag;  
 }  
 function Restart() {
+	Round = 1;
 	gridInfo = new Array();
 	for (var i=0; i<7; i++) {
 		gridInfo[i] = new Array();
@@ -125,8 +127,30 @@ function doMouseUp(e) {
 		gridInfo[pGrid.A][pGrid.B] = NowPlayer;
 		EffectOthers(pGrid.A, pGrid.B);
 		NowPlayer = -NowPlayer;
+		Round++;
 		ReDrawingAll();
 		RefreshState();
+		var Count = GetCount();
+		if (Count.NULL == 0) {
+			alert((Count.BLACK > Count.WHITE?"黑方":"白方") + "胜利");
+			NowPlayer = 0;
+			return;
+		}
+		if (Count.BLACK == 0) {
+			alert("白方" + "胜利");
+			NowPlayer = 0;
+			return;
+		}
+		if (Count.WHITE == 0) {
+			alert("黑方" + "胜利");
+			NowPlayer = 0;
+			return;
+		}
+		if (Round>400) {
+			alert((Count.BLACK > Count.WHITE?"黑方":"白方") + "胜利");
+			NowPlayer = 0;
+			return;
+		}
 	}
 }
 function DrawCircleOn(i, j, color) {
@@ -220,7 +244,7 @@ function RefreshState() {
 			"&nbsp&nbsp&nbsp&nbsp&nbsp" + 
 			"白子数:" + Count.WHITE + 
 			"&nbsp&nbsp&nbsp&nbsp&nbsp" + 
-			"当前回合:" + (NowPlayer==-1?"白方":"黑方");
+			"当前回(" + Round + ")合:" + (NowPlayer==-1?"白方":"黑方");
 }
 function GetWidth() {
 	return 6*LargeWidth + RectWidth;
